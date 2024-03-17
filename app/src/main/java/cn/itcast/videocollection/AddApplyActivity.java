@@ -30,8 +30,7 @@ public class AddApplyActivity extends AppCompatActivity {
 
     ImageView imageView;
     EditText applyName;
-    String FileName;
-    SaveLoad saveLoad=new SaveLoad();
+    String FileName="apply";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +52,9 @@ public class AddApplyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!applyName.getText().toString().equals("")) {
-                    FileName = applyName.getText().toString();
-                    saveLoad.save(FileName,applyName.getText().toString());
+                    save(FileName,applyName.getText().toString());
+                    MainActivity.namelist.add(new Apply(applyName.getText().toString(),R.mipmap.ic_launcher));
+                    AddLineActivity.applyNameList.add(applyName.getText().toString());
                     Toast.makeText(AddApplyActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(AddApplyActivity.this,"请输入应用名称",Toast.LENGTH_SHORT).show();
@@ -67,10 +67,56 @@ public class AddApplyActivity extends AppCompatActivity {
         text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String data=saveLoad.load(FileName);
+                String data=load(FileName);
                 Log.e("AddApplyActivity",data);
             }
         });
     }
+
+        public void save(String FileName,String inputText) {
+            FileOutputStream out=null;
+            BufferedWriter writer=null;
+            try{
+                out=openFileOutput(FileName, Context.MODE_APPEND);
+                writer=new BufferedWriter(new OutputStreamWriter(out));
+                writer.write(inputText+"\n");
+            }catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try{
+                    if(writer!=null){
+                        Log.e("writer:","OK");
+                        writer.close();
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public String load(String FileName){
+            FileInputStream in=null;
+            BufferedReader reader = null;
+            StringBuilder content=new StringBuilder();
+            String line="";
+            try {
+                in = openFileInput(FileName);
+                reader=new BufferedReader(new InputStreamReader(in));
+                while ((line=reader.readLine())!=null){
+                    content.append(line);
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }finally {
+                if(reader!=null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return content.toString();
+        }
 
 }

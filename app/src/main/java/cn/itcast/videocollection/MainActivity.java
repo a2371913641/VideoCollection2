@@ -17,28 +17,37 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    ApplyAdapter  adapter;
+    public static List<Apply> namelist;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initApplys();
-        ApplyAdapter adapter=new ApplyAdapter(
-                MainActivity.this,R.layout.apply_item,Data.applyList);
-        ListView listView=(ListView) findViewById(R.id.apply_name);
+        namelist=load("apply");
+        adapter=new ApplyAdapter(
+                MainActivity.this,R.layout.apply_item,namelist);
+        listView=(ListView) findViewById(R.id.apply_name);
         Button switchView=(Button) findViewById(R.id.switch_view);
         Button add=(Button)findViewById(R.id.add_button);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Apply apply= Data.applyList.get(position);
-                Toast.makeText(MainActivity.this,apply.getName(),Toast.LENGTH_SHORT).show();
+                String data=adapter.getItem(position).getName();
+                Intent intent=new Intent(MainActivity.this,LookLineActivity.class);
+                intent.putExtra("ApplyName",data);
+                startActivity(intent);
             }
         });
 
@@ -52,20 +61,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initApplys(){
-        for(int i=0;i<4;i++){
-            Apply douyin=new Apply("抖音",R.mipmap.ic_launcher);
-            Data.applyList.add(douyin);
-            Apply kuaishou=new Apply("快手",R.mipmap.ic_launcher);
-            Data.applyList.add(kuaishou);
-            Apply bilbil=new Apply("BilBil",R.mipmap.ic_launcher);
-            Data.applyList.add(bilbil);
+    public List<Apply> load(String FileName){
+        FileInputStream in=null;
+        BufferedReader reader = null;
+        ArrayList<Apply> applyList=new ArrayList<>();
+        String line="";
+        try {
+            in = openFileInput(FileName);
+            reader=new BufferedReader(new InputStreamReader(in));
+            while ((line=reader.readLine())!=null){
+                Log.e("MainActivity",line);
+                Apply apply=new Apply(line,R.mipmap.ic_launcher);
+                applyList.add(apply);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            if(reader!=null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        return applyList;
     }
 
     @Override
-    protected void onRestart() {
+    protected void onResume() {
+        super.onResume();
 
-        super.onRestart();
+        adapter.notifyDataSetChanged();
+
     }
 }
