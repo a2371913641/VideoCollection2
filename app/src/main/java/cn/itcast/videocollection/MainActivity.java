@@ -1,11 +1,20 @@
 package cn.itcast.videocollection;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +23,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,73 +36,74 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    ApplyAdapter  adapter;
+    ApplyAdapter adapter;
     public static List<Apply> namelist;
-    ListView listView;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        namelist=load("apply");
-        adapter=new ApplyAdapter(
-                MainActivity.this,R.layout.apply_item,namelist);
-        listView=(ListView) findViewById(R.id.apply_name);
+        namelist=getInstalled(this);
+        recyclerView=(RecyclerView) findViewById(R.id.apply_name);
+        adapter=new ApplyAdapter(this,R.layout.apply_item,namelist);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         Button switchView=(Button) findViewById(R.id.switch_view);
         Button add=(Button)findViewById(R.id.add_button);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String data=adapter.getItem(position).getName();
-                Intent intent=new Intent(MainActivity.this,LookLineActivity.class);
-                intent.putExtra("ApplyName",data);
-                startActivity(intent);
-            }
-        });
+        recyclerView.setAdapter(adapter);
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("MainActivity:","Click switchView");
                 Intent intent=new Intent(MainActivity.this,AddLineActivity.class);
                 startActivity(intent);
             }
         });
+
+        switchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchView();
+            }
+        });
+
     }
 
-    public List<Apply> load(String FileName){
-        FileInputStream in=null;
-        BufferedReader reader = null;
-        ArrayList<Apply> applyList=new ArrayList<>();
-        String line="";
-        try {
-            in = openFileInput(FileName);
-            reader=new BufferedReader(new InputStreamReader(in));
-            while ((line=reader.readLine())!=null){
-                Log.e("MainActivity",line);
-                Apply apply=new Apply(line,R.mipmap.ic_launcher);
+
+
+    public void switchView(){
+        if(adapter.type==0){
+            adapter.setType(1);
+            recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this,4));
+            adapter.notifyDataSetChanged();
+        }else{
+            adapter.setType(0);
+            recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        adapter.notifyDataSetChanged();
+
+    }
+
+
+    private List<Apply> getInstalled(Context context) {
+        List<Apply> applyList = new ArrayList<>();
+        List<PackageInfo> packageInfos = context.getPackageManager().getInstalledPackages(0);
+
+        for (PackageInfo packageInfo: packageInfos) {
+            if((packageInfo.applicationInfo.flags&ApplicationInfo.FLAG_SYSTEM)==0) {
+                String name = packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+                Drawable image = packageInfo.applicationInfo.loadIcon(getPackageManager());
+                Apply apply = new Apply(name, image);
                 applyList.add(apply);
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }finally {
-            if(reader!=null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }
         return applyList;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        adapter.notifyDataSetChanged();
-
-    }
 }

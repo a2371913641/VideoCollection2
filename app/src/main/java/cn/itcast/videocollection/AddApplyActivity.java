@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,7 +54,7 @@ public class AddApplyActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!applyName.getText().toString().equals("")) {
                     save(FileName,applyName.getText().toString());
-                    MainActivity.namelist.add(new Apply(applyName.getText().toString(),R.mipmap.ic_launcher));
+//                    MainActivity.namelist.add(new Apply(applyName.getText().toString(),);
                     AddLineActivity.applyNameList.add(applyName.getText().toString());
                     Toast.makeText(AddApplyActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
                 }else{

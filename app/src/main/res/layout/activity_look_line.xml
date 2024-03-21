@@ -14,8 +14,9 @@
         <TextView
             android:id="@+id/looklineactivity_appname"
             android:layout_width="100dp"
-            android:layout_height="30dp"
+            android:layout_height="20dp"
             />
+
     </LinearLayout>
     <ListView
         android:id="@+id/lookline_listview"

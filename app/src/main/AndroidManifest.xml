@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.itcast.videocollection">
 
+    <queries android:name="android.permission.QUERY_ALL_PACKAGES"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,9 +14,6 @@
         <activity android:name=".LookLineActivity"></activity>
         <activity android:name=".AddLineActivity" />
         <activity android:name=".AddApplyActivity" />
-        <activity
-            android:name=".SwitchView_dialog"
-            android:theme="@android:style/Theme.Holo.Dialog" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,5 +22,12 @@
             </intent-filter>
         </activity>
     </application>
+
+    <!--    适配安卓12&11获取当前已安装的所有应用列表-->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+    </queries>
 
 </manifest>

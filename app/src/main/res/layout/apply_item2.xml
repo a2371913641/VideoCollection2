@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/apply_item"
+    android:id="@+id/apply_item2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     >
     <ImageView
         android:id="@+id/apply_image"
@@ -11,7 +11,7 @@
         android:layout_height="64dp"/>
     <TextView
         android:id="@+id/apply_name"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"/>

@@ -34,7 +34,8 @@ public class AddLineActivity extends AppCompatActivity {
     EditText line;
     ListView applyName;
     public static List<String> applyNameList;
-    String FileName="apply";
+//    String FileName="apply";
+    String FileName;
     ArrayAdapter adapter1;
 
     @Override
@@ -47,7 +48,8 @@ public class AddLineActivity extends AppCompatActivity {
         Button addApply=(Button)findViewById(R.id.add_apply);
 
         applyName.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        applyNameList=loadList(FileName);
+//        applyNameList=loadList(FileName);
+        applyNameList=returnName();
         adapter1=new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,
                 applyNameList);
         applyName.setAdapter(adapter1);
@@ -86,8 +88,8 @@ public class AddLineActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                String data=load(FileName);
-                Log.e("AddLineActivity",data);
+//                String data=load(FileName);
+//                Log.e("AddLineActivity",data);
             }
         });
 
@@ -163,6 +165,14 @@ public class AddLineActivity extends AppCompatActivity {
             }
         }
         return applyList;
+    }
+
+    public List<String> returnName(){
+        ArrayList<String> names=new ArrayList<>();
+        for(Apply apply:MainActivity.namelist){
+            names.add(apply.getName());
+        }
+        return names;
     }
 
     @Override

@@ -2,7 +2,9 @@ package cn.itcast.videocollection;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.SearchManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -42,6 +44,12 @@ public class LookLineActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String line=adapter.getItem(position).toString();
                 Toast.makeText(LookLineActivity.this,line,Toast.LENGTH_SHORT).show();
+                Intent intent1=new Intent();
+                intent1.setAction(Intent.ACTION_VIEW);
+                Uri content_url = Uri.parse(line);
+                intent1.setData(content_url);
+                startActivity(intent1);
+//                jumpBrowser(line);
             }
         });
 
@@ -78,4 +86,18 @@ public class LookLineActivity extends AppCompatActivity {
         super.onPostResume();
         adapter.notifyDataSetChanged();
     }
+
+    public  void jumpBrowser(String value)
+    {
+        /* 取得网页搜寻的intent */
+        Intent search = new Intent(Intent.ACTION_WEB_SEARCH);
+        search.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        search.putExtra(SearchManager.QUERY, value);
+        final Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
+        if (appData != null) {
+            search.putExtra(SearchManager.APP_DATA, appData);
+        }
+        startActivity(search);
+    }
+
 }
