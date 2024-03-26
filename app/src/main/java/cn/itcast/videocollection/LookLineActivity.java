@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -43,10 +44,14 @@ public class LookLineActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String line=adapter.getItem(position).toString();
+                String url=line.substring(line.indexOf("http"));
+                Log.e("LookLineActvity:","line:"+line);
+                Log.e("LookLineActvity:","url:"+url);
+
                 Toast.makeText(LookLineActivity.this,line,Toast.LENGTH_SHORT).show();
                 Intent intent1=new Intent();
                 intent1.setAction(Intent.ACTION_VIEW);
-                Uri content_url = Uri.parse(line);
+                Uri content_url = Uri.parse(url);
                 intent1.setData(content_url);
                 startActivity(intent1);
 //                jumpBrowser(line);

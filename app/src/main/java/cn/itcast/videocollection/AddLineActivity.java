@@ -1,8 +1,12 @@
 package cn.itcast.videocollection;
 
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ClipData;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -32,32 +37,43 @@ import java.util.List;
 
 public class AddLineActivity extends AppCompatActivity {
     EditText line;
-    ListView applyName;
+    ListView applyNameListView;
     public static List<String> applyNameList;
 //    String FileName="apply";
     String FileName;
-    ArrayAdapter adapter1;
+    NameAdapter adapter1;
+    static int itemId=-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_line);
-        applyName=(ListView) findViewById(R.id.dialog_apply_name);
+        applyNameListView=(ListView) findViewById(R.id.dialog_apply_name);
         line=(EditText)findViewById(R.id.interlinkage);
         Button addLine=(Button)findViewById(R.id.confirm_add);
         Button addApply=(Button)findViewById(R.id.add_apply);
 
-        applyName.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        applyNameListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
 //        applyNameList=loadList(FileName);
         applyNameList=returnName();
-        adapter1=new ArrayAdapter<String>(this,R.layout.support_simple_spinner_dropdown_item,
-                applyNameList);
-        applyName.setAdapter(adapter1);
-        applyName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        adapter1=new NameAdapter(this,applyNameList);
+        applyNameListView.setAdapter(adapter1);
+        applyNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FileName=adapter1.getItem(position).toString();
-                Log.e("AddLineActivity",FileName);
+                FileName=applyNameList.get(position);
+                Log.e("FileName","-----------------------------------------------------------------------------");
+
+                Drawable drawable1=new ColorDrawable(Color.parseColor("#ffffff"));
+                Drawable drawable0=new ColorDrawable(Color.parseColor("#ECECEC"));
+
+                if(itemId!=position){
+                    view.setBackground(drawable1);
+                    if(adapter1.returnView(itemId)!=null){
+                        adapter1.returnView(itemId).setBackground(drawable0);
+                    }
+                    itemId=position;
+                }
             }
         });
 
@@ -179,5 +195,7 @@ public class AddLineActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         adapter1.notifyDataSetChanged();
+        applyNameListView.setBackgroundColor(Color.parseColor("#ECECEC"));
     }
+
 }
